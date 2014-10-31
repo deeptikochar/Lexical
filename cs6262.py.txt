@@ -1,0 +1,82 @@
+#1/usr/bin/env python
+def main():
+	import csv
+	f=open('verified_online.csv')
+	csv_f=csv.reader(f)
+	list_urls=[]
+	list_targets=[]
+	urls_length=[]
+	urls_vowels=[]
+	urls_characters=[]
+	urls_split=[] #used to store the split urls
+	urls_temp1=[]
+	urls_temp2=[]
+	urls_temp3=[]
+	count_vowels=0
+	count_characters=0
+	count_pathcharacters=0
+	count_pathvowels=0
+	path_vowels=[]
+	path_characters=[]
+	for row in csv_f:
+		list_urls.append(row[1])
+	for row in csv_f:
+		list_targets.append(row[7])
+	for x in range(1, 17025):
+		urls_length[x]=len(list_urls[x]) #length of url
+	vowel=("aeiouAEIOU")
+	characters=(".,/;:@#$%&
+	for x in range(1, 17025):                #number of vowels and characters in the url           
+		for j in list_urls[x]:
+			for j in vowel:
+				count_vowels +=1  #count of vowels
+			for j in characters:
+				count_characters +=1  #count of characters
+		urls_vowels[x]=count_vowels
+		urls_characters[x]=count_characters
+		count_vowels=0
+		count_characters=0
+	for x in range(1, 17025):
+		urls_split[x]=list_urls[x]
+		urls_split[x]=urls_split[x].split(".",3) #splits the url into 3 parts besed on the . delimiter eg:www.ece.gatech.edu/graduate/schedule_courses
+	for x in range(1, 17025):
+		urls_temp1[x]=urls_split[x](1) #ece
+		urls_temp2[x]=urls_split[x](2) #gatech
+		urls_temp3[x]=urls_split[x](3) #edu/graduate/schedule_courses
+		urls_temp4[x]=urls_temp3[x].split("/",1) # edu graduate/schedule_courses
+		urls_temp5[x]=urls_temp4[x](1) #edu TLD
+		urls_temp6[x]=urls_temp4[x](2) #graduate/schedule_courses
+	for x in range(1, 17025):		#for analyzing frequency of vowels and characters in the path
+		for j in urls_temp4[x]:
+			for j in vowel:
+				count_pathvowels +=1
+			for j in characters:
+				count_pathcharacters +=1
+		path_vowels[x]=count_pathvowels
+		path_characters[x]=count_pathcharacters
+		count_pathvowels=0
+		count_pathcharacters=0
+
+#---------------------------------------------------------------------------------------------------------------------------------
+
+#code for classifier
+
+import re
+import os
+import nltk.classify
+set=[]
+for i in range(1, 17025):
+	set[i]=('i','urls_length[i]','urls_vowels[i]','urls_characters[i]','urls_temp1[i]','urls_temp2[i]','urls_temp5[i]','urls_temp3[i]','path_vowels[i]','path_characters[i]')
+
+#if the above concatenation doesnt work out, use numpy.concatenate
+
+for i in range(1, 17025)
+	set_phishing =([(set[i], 'phihsing'])
+featuesets =[(features(n), phishing) for (n,phishing) in set_phishing]
+train_set, test_set=featuresets[1000:],featuresets[:1000]
+classifier =nltk.NaiveBayesClassifier.train(train_set)
+
+#input to the classifier is of the format classifier.classify(features('set_clean[i]'))
+
+	
+		
