@@ -1,3 +1,4 @@
+import csv
 
 def lexical_analysis(url):
     temp = url.find('//')
@@ -7,8 +8,9 @@ def lexical_analysis(url):
     print(url)
     url_length = len(url)		# URL length
     print(url_length)
-    domain_characteristics(url)
-    path_characteristics(url)
+    domains = domain_characteristics(url)
+    path_tokens = path_characteristics(url)
+    print(domains)
 
 
 # Domain characteristics
@@ -38,6 +40,7 @@ def domain_characteristics(url):
 
     print(avg_length)		# Average domain token length
     print(max_length)		# Longest domain token length
+    return domains
 
 # Path characteristics
 
@@ -62,6 +65,8 @@ def path_characteristics(url):
 
     print(avg_length)		# Average path token length
     print(max_length)		# Longest path token length
+    return path_tokens
+
 
 input_url = "https://www.jetbrains.com/pycharm/webhelp/configuring-python-interpreter-for-a-project.html"
 lexical_analysis(input_url)
