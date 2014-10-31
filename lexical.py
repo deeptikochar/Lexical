@@ -1,3 +1,4 @@
+import sqlite3
 
 def lexical_analysis(url):
     temp = url.find('//')
@@ -43,20 +44,22 @@ def token_characteristics(tokens):
     print(tokens)
     token_chars = []
     token_count = len(tokens)	# Domain token count
-    token_chars.append(token_count)
 
+    total_length = 0
     avg_length = 0
     max_length = 0
 
     for token in tokens:
         length = len(token)
-        avg_length += length
+        total_length += length
         if max_length < length:
             max_length = length
-    avg_length /= token_count
 
-    print(avg_length)		# Average domain token length
-    print(max_length)		# Longest domain token length
+    avg_length = total_length/token_count
+    total_length = total_length + token_count - 1
+
+    token_chars.append(token_count)
+    token_chars.append(total_length)
     token_chars.append(avg_length)
     token_chars.append(max_length)
     return token_chars
@@ -65,6 +68,7 @@ def token_characteristics(tokens):
 
 input_url = "https://www.jetbrains.com/pycharm/webhelp/configuring-python-interpreter-for-a-project.html"
 lexical_analysis(input_url)
+
 
 def main():
     import csv
