@@ -28,47 +28,42 @@ def path_vowels(url)
     parse=urlparse(url)
     path=parse[2]
     vowA=('Aa')
-    countAp=0
+    countap=0
     vowE=('eE')
-    countEp=0
+    countep=0
     vowI=('iI')
-    countIp=0
+    countip=0
     vowO=('oO')
-    countOp=0
+    countop=0
     vowU=('uU')
-    countUp=0
+    countup=0
     consC=('cC')
-    countCp=0
-    for vowel in path
-        for vowel in vowA
-            countAp++
-     for vowel in path
-        for vowel in vowE
-            countEp++
-     for vowel in path
-        for vowel in vowI
-            countIp++
-     for vowel in path
-        for vowel in vowO
-            countOp++
-     for vowel in path
-        for vowel in vowU
-            countUp++
-     for vowel in path
-        for vowel in consC
-            countCp++
-    print(countAp)
-    print(countEp)
-    print(countOp)
-    print(countIp)
-    print(countUp)
-    return countAp
-    return countEp
-    return countCp
-    return countIp
-    return countOp
-    return countUp
-    cumulativecountp=countAp+countEp+countIp+countOp+countUp
+    countcp=0
+    for vowel in path:
+        if(vowel in vowA):
+            countap = countap + 1
+        if(vowel in vowE):
+            countep = countep + 1
+        if(vowel in vowI):
+            countip = countip + 1
+        if(vowel in vowO):
+            countop = countop + 1
+        if(vowel in vowU):
+            countup = countup + 1
+        if(vowel in consC):
+            countcp = countcp + 1
+    print(countap)
+    print(countep)
+    print(countop)
+    print(countip)
+    print(countup)
+    return countap
+    return countep
+    return countcp
+    return countip
+    return countop
+    return countup
+    cumulativecountp=countap+countep+countip+countop+countup
     return cumulativecount
     
 
