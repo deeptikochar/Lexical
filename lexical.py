@@ -11,10 +11,7 @@ def lexical_analysis(url):
     url_length = len(url)		# URL length
     print(url_length)
     path_length(url)                    #path length
-    url_characterfreq(url)              #url character frequency
-    path_characterfreq(url)             #path character frequency
-    url_vowels(url)                     #frequency of vowels in url (individual as well as cumulative)
-    path_vowels(url)                    #frequency of vowels in path (individual as well as cumulative)
+    
 
     # Getting the domain and path tokens
     domain_tokens = get_domain_tokens(url)
@@ -24,6 +21,10 @@ def lexical_analysis(url):
     print(domain_characteristics)
     path_characteristics = token_characteristics(path_tokens)
     print(path_characteristics)
+    url_characterfreq(url)              #url character frequency
+    path_characterfreq(url)             #path character frequency
+    url_vowels(url, url_length - domain_characteristics[0] - path_characteristics[0] + 2)                     #frequency of vowels in url (individual as well as cumulative)
+    path_vowels(url, url_length - domain_characteristics[0] - path_characteristics[0] + 2)                    #frequency of vowels in path (individual as well as cumulative)
     return_values = []
     return_values.append(url_length)
     for value in domain_characteristics:
@@ -32,7 +33,7 @@ def lexical_analysis(url):
         return_values.append(value)
     return return_values
 
-def path_vowels(url):
+def path_vowels(url, total_num_chars):
     parse=urlparse(url)
     path=parse[2]
     vowA=('Aa')
@@ -75,7 +76,7 @@ def path_vowels(url):
     return cumulativecount
     
 
-def url_vowels(url):
+def url_vowels(url, total_num_chars):
     vowA=('Aa')
     countA=0
     vowE=('eE')
