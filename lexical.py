@@ -24,6 +24,13 @@ def lexical_analysis(url):
     print(domain_characteristics)
     path_characteristics = token_characteristics(path_tokens)
     print(path_characteristics)
+    return_values = []
+    return_values.append(url_length)
+    for value in domain_characteristics:
+        return_values.append(value)
+    for value in path_characteristics:
+        return_values.append(value)
+    return return_values
 
 def path_vowels(url):
     parse=urlparse(url)
