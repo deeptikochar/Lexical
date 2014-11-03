@@ -21,6 +21,7 @@ def lexical_analysis(url):
     print(domain_characteristics)
     path_characteristics = token_characteristics(path_tokens)
     print(path_characteristics)
+    character_frequencies(url, url_length - domain_characteristics[0] - path_characteristics[0] + 2)
     url_characterfreq(url)              #url character frequency
     path_characterfreq(url)             #path character frequency
     url_vowels(url, url_length - domain_characteristics[0] - path_characteristics[0] + 2)                     #frequency of vowels in url (individual as well as cumulative)
@@ -32,6 +33,27 @@ def lexical_analysis(url):
     for value in path_characteristics:
         return_values.append(value)
     return return_values
+
+def character_frequencies(input_str, total_length):
+    char_freq = []
+    char_freq.extend([0] * 26)
+    special_char_count = 0
+
+    for char in input_str:
+        ascii_value = ord(char)
+        if(ascii_value >= 97 and ascii_value <= 122):
+            char_freq[ascii_value - 97] += 1
+        elif(ascii_value >= 65 and ascii_value <= 90):
+            char_freq[ascii_value - 65] += 1
+        elif(char in "!@#$%^&*()-_=+{}[]|\':;><,?"):
+            special_char_count += 1
+
+    for i in range(0, len(char_freq)):
+        char_freq[i] /= total_length
+    print("Character frequencies")
+    print(char_freq)
+    print(special_char_count)
+
 
 def path_vowels(url, total_num_chars):
     parse=urlparse(url)
