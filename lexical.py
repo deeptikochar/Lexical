@@ -71,6 +71,7 @@ def token_characteristics(tokens):
 def character_frequencies(input_str, total_length):
     char_freq = []
     char_freq.extend([0] * 26)
+    digit_count = 0
     special_char_count = 0
 
     for char in input_str:
@@ -79,9 +80,12 @@ def character_frequencies(input_str, total_length):
             char_freq[ascii_value - 97] += 1
         elif(ascii_value >= 65 and ascii_value <= 90):      # To find occurrences of [A-Z]
             char_freq[ascii_value - 65] += 1
+        elif(ascii_value >= 48 and ascii_value <= 57):
+            digit_count += 1
         elif(char in "!@#$%^&*()-_=+{}[]|\':;><,?"):        # To find occurrences of special characters
             special_char_count += 1
 
+    char_freq.insert(0, digit_count)
     char_freq.insert(0,special_char_count)
     for i in range(0, len(char_freq)):
         char_freq[i] = char_freq[i] * 100 / total_length
@@ -102,7 +106,7 @@ def main():
     with con:
         cur = con.cursor()
         cur.execute("DROP TABLE IF EXISTS lexical")
-        cur.execute("CREATE TABLE lexical(url TEXT, url_length INT, domain_token_count INT, domain_length INT, domain_avg_length REAL, domain_max_length INT, path_token_count INT, path_length INT, path_average_length REAL, path_max_length INT, special_chars REAL, a REAL, b REAL, c REAL, d REAL, e REAL, f REAL, g REAL, h REAL, i REAL, j REAL, k REAL, l REAL, m REAL, n REAL, o REAL, p REAL, q REAL, r REAL, s REAL, t REAL, u REAL, v REAL, w REAL, x REAL, y REAL, z REAL)")
+        cur.execute("CREATE TABLE lexical(url TEXT, url_length INT, domain_token_count INT, domain_length INT, domain_avg_length REAL, domain_max_length INT, path_token_count INT, path_length INT, path_average_length REAL, path_max_length INT, special_chars REAL, digits REAL, a REAL, b REAL, c REAL, d REAL, e REAL, f REAL, g REAL, h REAL, i REAL, j REAL, k REAL, l REAL, m REAL, n REAL, o REAL, p REAL, q REAL, r REAL, s REAL, t REAL, u REAL, v REAL, w REAL, x REAL, y REAL, z REAL)")
         for row in csv_f:
             no_urls += 1
             url = row[1]
@@ -112,7 +116,7 @@ def main():
                     no_tiny_urls += 1
                     continue
             values = lexical_analysis(url)
-            cur.execute("INSERT INTO lexical VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", values)
+            cur.execute("INSERT INTO lexical VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", values)
 
         cur.execute("SELECT * FROM lexical")
         rows = cur.fetchall()
