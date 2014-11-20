@@ -41,7 +41,7 @@ def lexical_analysis(url):
     # Get percentage of special characters, digits and all alphabets
     char_freq = character_frequencies(url, url_length - domain_characteristics[0] - path_characteristics[0] + 2)
 
-
+    # Check if a popular brand name is present in the path
     brand_presence = check_brand_name(url)
 
     return_values.append(brand_presence)
@@ -131,6 +131,10 @@ def character_frequencies(input_str, total_length):
 
     return char_freq
 
+# Function name: check_brand_name
+# Input: URL
+# Output: 1 if a popular brand name in present in the path. 0 otherwise
+
 def check_brand_name(url):
     index = url.find('/')
     path = url[index+1:]
@@ -142,7 +146,7 @@ def check_brand_name(url):
     return 0
 
 
-def main():
+def train():
     import csv
     f=open('verified_online.csv',"r")
     csv_f=csv.reader(f)
@@ -201,9 +205,6 @@ def main():
         rows = cur.fetchall()
         for row in rows:
             print(row)
-        cur.execute("select sum(brand_presence) from lexical")
-        count = cur.fetchone()
-        print(count)
         print("Number of malicious urls analyzed: %d" % no_urls)
         print("Number of malicious tiny urls: %d" % no_tiny_urls)
         print("Number of benign urls analyzed: %d" % no_urls_benign)
@@ -225,7 +226,6 @@ def main():
     f.close()
     benign_f.close()
 
-
-main()
+train()
 
 
