@@ -5,18 +5,19 @@ import sqlite3
 # Input: url
 # Output: A list containing 28 elements (in order):
 #     01. URL
-#     02. URL length
-#     03. Domain token count
-#     04. Domain total length
-#     05. Domain token average length
-#     06. Domain token max length
-#     07. Path token count
-#     08. Path total length
-#     09. Path token average length
-#     10. Path token max length
-#     11. Percentage of special characters in url
-#     12. Percentage of digits in url
-#     13. Percentage of all alphabets in url (26 elements)
+#     02. Brand name presence (1/0)
+#     03. URL length
+#     04. Domain token count
+#     05. Domain total length
+#     06. Domain token average length
+#     07. Domain token max length
+#     08. Path token count
+#     09. Path total length
+#     10. Path token average length
+#     11. Path token max length
+#     12. Percentage of special characters in url
+#     13. Percentage of digits in url
+#     14. Percentage of all alphabets in url (26 elements)
 
 
 def lexical_analysis(url):
@@ -40,6 +41,10 @@ def lexical_analysis(url):
     # Get percentage of special characters, digits and all alphabets
     char_freq = character_frequencies(url, url_length - domain_characteristics[0] - path_characteristics[0] + 2)
 
+
+    brand_presence = check_brand_name(url)
+
+    return_values.append(brand_presence)
     return_values.append(url_length)
     return_values.extend(domain_characteristics)
     return_values.extend(path_characteristics)
@@ -126,6 +131,17 @@ def character_frequencies(input_str, total_length):
 
     return char_freq
 
+def check_brand_name(url):
+    index = url.find('/')
+    path = url[index+1:]
+    path = path.lower()
+    brand_names = ['atmail','contactoffice','fastmail','gandi','gmail','gmx','hushmail','lycos','outlook','rackspace','rediff','yandex','zoho','shortmail','myway','zimbra','boardermail','flashmail','caramail','computermail','emailchoice','facebook','myspace','linkedin','twitter','bing','glassdoor','friendster','myyearbook','flixster','myheritage','orkut','blackplanet','skyrock','perfspot','zorpia','netlog','tuenti','nasza-klasa','studivz','renren','kaixin001','hyves','ibibo','sonico','wer-kennt-wen','cyworld','iwiw','pinterest','tumblr','instagram','flickr','dropbox','woocommerce','2checkout','ach-payments','wepay','dwolla','braintree','feefighters','amazon','rupay','stripe','webmoney','worldpay','westernunion','verifone','transferwise','jpmorgan','bankofamerica','citibank','pnc','bnymellon','suntrust','capitalone','usbank','statestreet','tdbank','icici','bnpparibas','comerica','mitsubishi','credit-agricole','ca-cib','barclays','abchina','japanpost','societegenerale','apple','wellsfargo','pkobp','resbank','paypal','paypl','pypal','barclay','sars','google','chase','aol','microsoft','allegro','pko','ebay','cartasi','lloyds','visa','mastercard','bbamericas','voda','vodafone','hutch','walmart','hmrc','rbc','rbs','americanexpress','american','express','standard','relacionamento','itunes','morgan','commbank','cielo','santander','deutsche','asb','nwolb','irs','hsbc','verizon','att','hotmail','yahoo','kroger','citi','nyandcompany','walgreens','bestbuy','abebooks','dillons','lacoste','exxon','radioshack','shell','abercrombie']
+    for name in brand_names:
+        if(name in path):
+            return 1
+    return 0
+
+
 def main():
     import csv
     f=open('verified_online.csv',"r")
@@ -145,7 +161,7 @@ def main():
     with con:
         cur = con.cursor()
         cur.execute("DROP TABLE IF EXISTS lexical")
-        cur.execute("CREATE TABLE lexical(malicious REAL, url TEXT, url_length INT, domain_token_count INT, domain_length INT, domain_avg_length REAL, domain_max_length INT, path_token_count INT, path_length INT, path_average_length REAL, path_max_length INT, special_chars REAL, digits REAL, a REAL, b REAL, c REAL, d REAL, e REAL, f REAL, g REAL, h REAL, i REAL, j REAL, k REAL, l REAL, m REAL, n REAL, o REAL, p REAL, q REAL, r REAL, s REAL, t REAL, u REAL, v REAL, w REAL, x REAL, y REAL, z REAL)")
+        cur.execute("CREATE TABLE lexical(malicious REAL, url TEXT, brand_presence INT, url_length INT, domain_token_count INT, domain_length INT, domain_avg_length REAL, domain_max_length INT, path_token_count INT, path_length INT, path_average_length REAL, path_max_length INT, special_chars REAL, digits REAL, a REAL, b REAL, c REAL, d REAL, e REAL, f REAL, g REAL, h REAL, i REAL, j REAL, k REAL, l REAL, m REAL, n REAL, o REAL, p REAL, q REAL, r REAL, s REAL, t REAL, u REAL, v REAL, w REAL, x REAL, y REAL, z REAL)")
         # Reading malicious urls from Phishtank file
         for row in csv_f:
             is_tiny_url = 0
@@ -161,7 +177,7 @@ def main():
                 continue
             values = lexical_analysis(url)          # Call lexical analysis if it isn't a tiny url
             values.insert(0, 1)                     # Insert 1 at the front of the list for malicious urls
-            cur.execute("INSERT INTO lexical VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", values)
+            cur.execute("INSERT INTO lexical VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", values)
 
         # Reading benign urls from small_benign.txt
         for line in benign_f:
@@ -177,13 +193,17 @@ def main():
                 continue
             values = lexical_analysis(url)
             values.insert(0,0)                       # Insert 0 at the front of the list for benign urls
-            cur.execute("INSERT INTO lexical VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", values)
+            cur.execute("INSERT INTO lexical VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", values)
+
 
 
         cur.execute("SELECT * FROM lexical")
         rows = cur.fetchall()
         for row in rows:
             print(row)
+        cur.execute("select sum(brand_presence) from lexical")
+        count = cur.fetchone()
+        print(count)
         print("Number of malicious urls analyzed: %d" % no_urls)
         print("Number of malicious tiny urls: %d" % no_tiny_urls)
         print("Number of benign urls analyzed: %d" % no_urls_benign)
@@ -191,12 +211,12 @@ def main():
         cur.execute("SELECT COUNT(*) FROM lexical")
         count = cur.fetchone()
         print("Total number of urls analysed: %d" % count)
-        cur.execute("SELECT AVG(url_length), AVG(domain_token_count), AVG(domain_length),AVG(domain_avg_length),AVG(domain_max_length),AVG(path_token_count),AVG(path_length),AVG(path_average_length),AVG(path_max_length),AVG(special_chars) from lexical where malicious = 1")
+        cur.execute("SELECT AVG(brand_presence), AVG(url_length), AVG(domain_token_count), AVG(domain_length),AVG(domain_avg_length),AVG(domain_max_length),AVG(path_token_count),AVG(path_length),AVG(path_average_length),AVG(path_max_length),AVG(special_chars) from lexical where malicious = 1")
         average = cur.fetchone()
-        print("Averages: url length, domain token count, domain length, avg domain token length, max domain token length, path token count, path length, avg path token length, max path token length, percentage of special chars")
+        print("Averages: brand presence, url length, domain token count, domain length, avg domain token length, max domain token length, path token count, path length, avg path token length, max path token length, percentage of special chars")
         print("Malicious:")
         print(average)
-        cur.execute("SELECT AVG(url_length), AVG(domain_token_count), AVG(domain_length),AVG(domain_avg_length),AVG(domain_max_length),AVG(path_token_count),AVG(path_length),AVG(path_average_length),AVG(path_max_length),AVG(special_chars) from lexical where malicious = 0")
+        cur.execute("SELECT AVG(brand_presence), AVG(url_length), AVG(domain_token_count), AVG(domain_length),AVG(domain_avg_length),AVG(domain_max_length),AVG(path_token_count),AVG(path_length),AVG(path_average_length),AVG(path_max_length),AVG(special_chars) from lexical where malicious = 0")
         average = cur.fetchone()
         print("Benign:")
         print(average)
